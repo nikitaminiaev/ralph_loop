@@ -1,4 +1,5 @@
 #!/bin/bash
+MODEL="opencode/glm-4.7-free"
 TOOLKIT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_PATH=$1
 INPUT_MD=$2
@@ -12,7 +13,7 @@ cd "$PROJECT_PATH" || exit 1
 
 PRD_LOGIC=$(cat "$TOOLKIT_PATH/prompts/prd_logic.md")
 
-opencode run "
+opencode run -m $MODEL "
   $PRD_LOGIC
 
   ВХОДНОЙ ФАЙЛ: @$INPUT_MD
