@@ -29,6 +29,25 @@
    ./ralph_loop/ralph_opencode.sh /path/to/project 20
    ```
 5) Наблюдай: агент будет брать задачу `US-001`, выполнять её, запускать тесты, делать коммит, обновлять `docs/prd.json` и переходить к следующей итерации.
+   Если лимит итераций достигнут, скрипт спросит продолжать ли дальше.
+
+## Запуск через tmux (чтобы не зависеть от SSH)
+1) Подключись к Raspberry Pi по SSH.
+2) Запусти `tmux`:
+   ```bash
+   tmux new -s ralph
+   ```
+3) Запусти цикл внутри `tmux`:
+   ```bash
+   ./ralph_loop/ralph_opencode.sh /path/to/project 100
+   ```
+4) Отсоединись от сессии:
+   - Нажми `Ctrl+B`, затем `D`
+5) Закрой SSH или выключи свой ПК — процесс на Pi продолжит работать.
+6) Чтобы вернуться:
+   ```bash
+   tmux attach -t ralph
+   ```
 
 ## Скрипты
 ### `prd-converter.sh`
@@ -41,8 +60,9 @@
 
 ### `ralph_opencode.sh`
 Запускает итеративный цикл Ralph Loop.
+По умолчанию safety-stop — 10000 итераций, после чего скрипт спросит, продолжать ли дальше.
 
 Использование:
 ```bash
-./ralph_loop/ralph_opencode.sh <project_path> <iterations>
+./ralph_loop/ralph_opencode.sh <project_path> [iterations]
 ```
