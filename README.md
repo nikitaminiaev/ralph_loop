@@ -18,7 +18,7 @@
 1) Создай обычный текстовый файл с тем, что ты хочешь сделать (например, `IMPLEMENTATION_PLAN.md`).
 2) Сконвертируй его в PRD:
    ```bash
-   ./ralph_loop/prd-converter.sh /path/to/project IMPLEMENTATION_PLAN.md
+   ./prd-converter.sh /path/to/project IMPLEMENTATION_PLAN.md
    ```
 3) При желании доработай PRD в режиме plan:
    ```bash
@@ -26,7 +26,7 @@
    ```
 4) Запусти цикл:
    ```bash
-   ./ralph_loop/ralph_opencode.sh /path/to/project 20
+   ./ralph_opencode.sh /path/to/project 20
    ```
 5) Наблюдай: агент будет брать задачу `US-001`, выполнять её, запускать тесты, делать коммит, обновлять `docs/prd.json` и переходить к следующей итерации.
    Если лимит итераций достигнут, скрипт спросит продолжать ли дальше.
@@ -39,7 +39,7 @@
    ```
 3) Запусти цикл внутри `tmux`:
    ```bash
-   ./ralph_loop/ralph_opencode.sh /path/to/project 100
+   ./ralph_opencode.sh /path/to/project 100
    ```
 4) Отсоединись от сессии:
    - Нажми `Ctrl+B`, затем `D`

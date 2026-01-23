@@ -1,5 +1,5 @@
 #!/bin/bash
-MODEL="opencode/glm-4.7-free"
+MODEL="opencode/grok-code"
 TOOLKIT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_PATH=$1
 INPUT_MD=$2
