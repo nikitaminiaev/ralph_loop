@@ -38,13 +38,13 @@ while true; do
   echo "--- Ralph Loop: Iteration $current_iteration ---"
 
   # Мы передаем:
-  # 1. LOOP_LOGIC (из тулкита) — правила игры.
+  # 1. LOOP_LOGIC — правила игры.
   # 2. Файлы управления через префикс @ (prd.json, progress.txt).
   
   last_output=$(opencode run "
     $LOOP_LOGIC
     
-    ФАЙЛЫ УПРАВЛЕНИЯ: @docs/prd.json, @docs/progress.txt
+    FILES: @docs/prd.json, @docs/progress.txt
   ")
   
   # Проверка на выход (теперь Ральф будет писать это в stdout)
