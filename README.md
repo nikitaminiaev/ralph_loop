@@ -22,7 +22,7 @@
    ```
 3) При желании доработай PRD в режиме plan:
    ```bash
-   opencode run "Проверь docs/prd.json и улучши формулировки" --mode plan
+   opencode run "Проверь @docs/prd.json и улучши формулировки" --mode plan
    ```
 4) Запусти цикл:
    ```bash

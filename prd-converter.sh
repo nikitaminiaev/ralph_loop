@@ -1,5 +1,5 @@
 #!/bin/bash
-MODEL="opencode/grok-code"
+MODEL="opencode/big-pickle"
 TOOLKIT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_PATH=$1
 INPUT_MD=$2
