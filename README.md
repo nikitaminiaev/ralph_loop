@@ -18,7 +18,7 @@
 1) Создай обычный текстовый файл с тем, что ты хочешь сделать (например, `IMPLEMENTATION_PLAN.md`).
 2) Сконвертируй его в PRD:
    ```bash
-   ./prd-converter.sh /path/to/project IMPLEMENTATION_PLAN.md
+   MODEL=opencode/your-model ./ralph_loop/prd-converter.sh /path/to/project IMPLEMENTATION_PLAN.md
    ```
 3) При желании доработай PRD в режиме plan:
    ```bash
@@ -26,10 +26,12 @@
    ```
 4) Запусти цикл:
    ```bash
-   ./ralph_opencode.sh /path/to/project 20
+   MODEL=opencode/your-model ./ralph_loop/ralph_opencode.sh /path/to/project 20
    ```
 5) Наблюдай: агент будет брать задачу `US-001`, выполнять её, запускать тесты, делать коммит, обновлять `docs/prd.json` и переходить к следующей итерации.
    Если лимит итераций достигнут, скрипт спросит продолжать ли дальше.
+
+По умолчанию используется модель `opencode/big-pickle`. Переопредели её через переменную окружения `MODEL`.
 
 ## Запуск через tmux (чтобы не зависеть от SSH)
 1) Подключись к Raspberry Pi по SSH.
@@ -39,7 +41,7 @@
    ```
 3) Запусти цикл внутри `tmux`:
    ```bash
-   ./ralph_opencode.sh /path/to/project 100
+   MODEL=opencode/your-model ./ralph_loop/ralph_opencode.sh /path/to/project 100
    ```
 4) Отсоединись от сессии:
    - Нажми `Ctrl+B`, затем `D`
@@ -58,6 +60,11 @@
 ./ralph_loop/prd-converter.sh <project_path> <input_file.md>
 ```
 
+Переопределить модель:
+```bash
+MODEL=opencode/your-model ./ralph_loop/prd-converter.sh <project_path> <input_file.md>
+```
+
 ### `ralph_opencode.sh`
 Запускает итеративный цикл Ralph Loop.
 По умолчанию safety-stop — 10000 итераций, после чего скрипт спросит, продолжать ли дальше.
@@ -65,4 +72,9 @@
 Использование:
 ```bash
 ./ralph_loop/ralph_opencode.sh <project_path> [iterations]
+```
+
+Переопределить модель:
+```bash
+MODEL=opencode/your-model ./ralph_loop/ralph_opencode.sh <project_path> [iterations]
 ```

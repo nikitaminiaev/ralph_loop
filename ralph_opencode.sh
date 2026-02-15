@@ -1,14 +1,15 @@
 #!/bin/bash
 
-# Путь к тулкиту
-TOOLKIT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
+MODEL="${MODEL:-opencode/big-pickle}"
 PROJECT_PATH=$1
 ITERATIONS=$2
 SAFETY_STOP=10000
 
+TOOLKIT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 if [ -z "$PROJECT_PATH" ]; then
   echo "Usage: ./ralph_opencode.sh <project_path> [iterations]"
+  echo "MODEL can be set via environment variable: MODEL=opencode/your-model ./ralph_opencode.sh ..."
   exit 1
 fi
 
@@ -41,7 +42,7 @@ while true; do
   # 1. LOOP_LOGIC — правила игры.
   # 2. Файлы управления через префикс @ (prd.json, progress.txt).
   
-  last_output=$(opencode run "
+  last_output=$(opencode run -m $MODEL "
     $LOOP_LOGIC
     
     FILES: @docs/prd.json, @docs/progress.txt
