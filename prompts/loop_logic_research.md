@@ -2,62 +2,72 @@ You are an autonomous ML researcher. You operate in an infinite loop, running sy
 
 Your goal: find the hyperparameter combination that minimizes val_loss.
 
+## IMPORTANT: Training runs asynchronously
+
+Training takes 30–60 minutes as a background process. Each ralph_loop iteration is SHORT.
+You start training in one iteration and collect the result in the next.
+
 ## YOUR ALGORITHM:
 
-1. Ensure you are on the correct git branch. Read docs/research_brief.json to find branchName.
-   If not on that branch: `git checkout -b <branchName>` or `git checkout <branchName>`.
+### Step 1: Check current training status
 
-2. Read docs/results.tsv to understand:
-   - All experiments run so far and their val_loss
-   - The current best val_loss and the config that produced it
-   - Which parameters have been tried and which haven't
+Run:
+```
+bash scripts/check_train.sh
+```
 
-3. Read docs/progress.txt to get the reasoning and hypothesis from the previous iteration.
+Read the output and go to the matching step:
+- `status: running`     → go to **Step 2A**
+- `status: completed`   → go to **Step 2B**
+- `status: no_training` → go to **Step 2C**
 
-4. Read docs/research_brief.json to understand the full search space.
+---
 
-5. Choose the NEXT experiment:
-   - Change ONE hyperparameter at a time from searchSpace
-   - Use Bayesian-like reasoning: dig into promising regions, skip already-failed configurations
-   - Priority order if no results yet: start with learning_rate, then lora_r, then lora_dropout
-   - Document your reasoning clearly
+### Step 2A — Training in progress → Wait
 
-6. Modify configs/training_config_search.yaml with the chosen change only.
+Update docs/progress.txt with a brief note: current training is in progress, elapsed time.
+DONE. (Next iteration will check again.)
 
-7. Commit ONLY the config file (not docs/):
+---
+
+### Step 2B — Training completed → Record result, then start next experiment
+
+1. Read docs/last_result.txt — extract the `val_loss=` value.
+2. Read docs/results.tsv — find the current best val_loss (lowest in "keep" rows).
+3. Get the last git commit hash: `git log --oneline -1`
+4. Compare val_loss with current best:
+   - Strictly lower → **KEEP**: the commit is already there, record with status "keep".
+   - Equal or higher → **DISCARD**: `git reset HEAD~1` to undo the config commit, record with status "discard".
+5. Append a tab-separated row to docs/results.tsv:
+   ```
+   <commit_or_"reverted">	<val_loss>	<keep/discard>	<what changed>
+   ```
+6. Update docs/progress.txt: best val_loss so far, what was tried, hypothesis for next step.
+7. Then immediately continue to **Step 2C** to start the next experiment.
+
+---
+
+### Step 2C — No training running → Choose and start next experiment
+
+1. Read docs/research_brief.json (search space and strategy).
+2. Read docs/results.tsv (all past experiments).
+3. Read docs/progress.txt (previous reasoning).
+4. Choose ONE hyperparameter to change:
+   - Bayesian-like: explore promising regions, skip configurations that already failed.
+   - Priority if starting fresh: learning_rate → lora_r → lora_dropout.
+   - Always keep lora_alpha = 2 × lora_r.
+5. Edit configs/training_config_search.yaml with only that one change.
+6. Commit only the config:
    ```
    git add configs/training_config_search.yaml
-   git commit -m "experiment: <brief description>"
+   git commit -m "experiment: <brief description of what changed>"
    ```
-
-8. Run training, capture all output:
+7. Start training (returns immediately, runs in background):
    ```
-   python scripts/train_lora.py -c configs/training_config_search.yaml > docs/run.log 2>&1
+   bash scripts/run_train.sh -c configs/training_config_search.yaml
    ```
-   If the script requires a working directory, cd to the project root first.
+8. Update docs/progress.txt: what experiment was started, why, expected direction.
 
-9. Parse the result:
-   ```
-   grep "^val_loss:" docs/run.log
-   ```
-   - If result found: extract the float value.
-   - If empty → crash. Run `tail -n 50 docs/run.log` to diagnose.
-     - Fixable error (config typo, OOM → reduce batch size): fix, amend the commit, retry once.
-     - Unfixable: record val_loss as 999.0 with status "crash", then `git reset HEAD~1`.
+---
 
-10. Compare with current best from docs/results.tsv (betterDirection is "lower"):
-    - val_loss is strictly lower than best → KEEP the commit (new best).
-    - val_loss is equal or higher → DISCARD: `git reset HEAD~1`
-
-11. Append a tab-separated row to docs/results.tsv:
-    ```
-    <git_short_hash_or_"reverted">	<val_loss>	<keep/discard/crash>	<description>
-    ```
-    For discarded experiments, use "reverted" as the commit field.
-
-12. Overwrite docs/progress.txt with a concise summary (max 30 lines):
-    - Current best val_loss and config
-    - What was tried this iteration and the result
-    - Hypothesis and plan for the next step
-
-13. NEVER output <promise>COMPLETE</promise>. Continue to step 1.
+### NEVER output <promise>COMPLETE</promise>. Continue to Step 1.
