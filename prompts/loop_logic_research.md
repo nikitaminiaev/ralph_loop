@@ -23,10 +23,15 @@ Read the output and go to the matching step:
 
 ---
 
-### Step 2A — Training in progress → Wait
+### Step 2A — Training in progress → Wait 10 minutes
 
-Update docs/progress.txt with a brief note: current training is in progress, elapsed time.
-DONE. (Next iteration will check again.)
+Run:
+```
+sleep 600
+```
+
+Then update docs/progress.txt with a brief note: training in progress, elapsed time.
+DONE. (Next iteration will check again after the sleep.)
 
 ---
 
